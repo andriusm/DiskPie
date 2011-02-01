@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="diskpie" />
+		<Option pch_mode="0" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\diskpie" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="C:\Program Files\CodeBlocks\MinGW\bin" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\diskpie" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="C:\Program Files\CodeBlocks\MinGW\bin" />
+				<Option object_output="obj\Release\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="include" />
+            <Add directory="C:\Program Files (x86)\CodeBlocks\MinGW\glfw-2.7.bin.WIN32\include" />
+		</Compiler>
+		<Linker>
+			<Add library="glfw" />
+			<Add library="opengl32" />
+			<Add library="glu32" />
+			<Add library="gdi32" />
+            <Add directory="C:\Program Files (x86)\CodeBlocks\MinGW\glfw-2.7.bin.WIN32\lib" />
+		</Linker>
+		<Unit filename="include\FileGraph.h" />
+		<Unit filename="include\tree.h" />
+		<Unit filename="include\tree_util.h" />
+		<Unit filename="src\FileGraph.cpp" />
+		<Unit filename="src\main.cpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
