@@ -37,34 +37,37 @@ void GLFWCALL refreshWindow(void)
 
 void GLFWCALL mousePosChanged(int mx, int my)
 {
-    cout << "mouse: " << mx << " " << my << endl;
+    //cout << "mouse: " << mx << " " << my << endl;
 
-    my -= centerY;
     mx -= centerX;
-
-    //inner circle check (works fine)
-    if(mx*mx + my*my < circleWidthSquared) fg.dl.dirs[2].sector.highlighted = TRUE;
-    else fg.dl.dirs[2].sector.highlighted = FALSE;
-
-    /*
     my -= centerY;
-    mx -= centerX;
-
-    cout << "mouse2: " << mx << " " << my << endl;
     double angle = atan2(my, mx);
+    mx *= mx;
+    my *= my;
 
-    //double angle = atan2(my - centerY, mx - centerX);
-    //int nx = centerX + cos(angle) * circleWidth;
-    //int ny = centerY + sin(angle) * circleWidth;
+    //cout << "angle: " << angle << endl;
+    angle = angle * 180 / M_PI + 90;
 
-    int nx = cos(angle) * circleWidth;
-    int ny = sin(angle) * circleWidth;
+    //if(angle>=-90 && angle <=90) angle += 90;
+    //else angle += 180;
 
-    cout << "calc: " << nx << " " << ny << endl;
+    if(angle < 0) angle += 450;
+    else angle += 90;
+    if(angle>360) angle -= 360;
 
-    if(mx <= nx || my <= ny) fg.dl.dirs[2].sector.highlighted = TRUE;
+    cout << "angle2: " << angle << endl;
+
+    int inner = fg.dl.dirs[2].depth * circleWidth;
+    inner *= inner;
+
+    int outter = (fg.dl.dirs[2].depth + 1) * circleWidth;
+    outter *= outter;
+
+    if(mx + my > inner && mx + my < outter) fg.dl.dirs[2].sector.highlighted = TRUE;
     else fg.dl.dirs[2].sector.highlighted = FALSE;
-    */
+
+    //if(mx*mx + my*my < circleWidthSquared) fg.dl.dirs[2].sector.highlighted = TRUE;
+    //else fg.dl.dirs[2].sector.highlighted = FALSE;
 }
 
 void GLFWCALL keyPressed(int key, int action)
