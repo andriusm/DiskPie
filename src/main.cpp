@@ -45,17 +45,14 @@ void GLFWCALL mousePosChanged(int mx, int my)
     mx *= mx;
     my *= my;
 
-    //cout << "angle: " << angle << endl;
     angle = angle * 180 / M_PI + 90;
-
-    //if(angle>=-90 && angle <=90) angle += 90;
-    //else angle += 180;
-
-    if(angle < 0) angle += 450;
-    else angle += 90;
-    if(angle>360) angle -= 360;
+    angle += 360;
+    if(angle>=360) angle -= 360;
 
     cout << "angle2: " << angle << endl;
+
+    //cout << fg.dl.dirs[2].sector.startAngle << "  " << fg.dl.dirs[2].sector.angle << endl;
+
 
     int inner = fg.dl.dirs[2].depth * circleWidth;
     inner *= inner;
@@ -63,8 +60,16 @@ void GLFWCALL mousePosChanged(int mx, int my)
     int outter = (fg.dl.dirs[2].depth + 1) * circleWidth;
     outter *= outter;
 
-    if(mx + my > inner && mx + my < outter) fg.dl.dirs[2].sector.highlighted = TRUE;
-    else fg.dl.dirs[2].sector.highlighted = FALSE;
+    if(mx + my > inner && mx + my < outter &&
+            angle > fg.dl.dirs[2].sector.startAngle &&
+            angle < (fg.dl.dirs[2].sector.startAngle + fg.dl.dirs[2].sector.angle) )
+    {
+        fg.dl.dirs[2].sector.highlighted = TRUE;
+    }
+    else
+    {
+        fg.dl.dirs[2].sector.highlighted = FALSE;
+    }
 
     //if(mx*mx + my*my < circleWidthSquared) fg.dl.dirs[2].sector.highlighted = TRUE;
     //else fg.dl.dirs[2].sector.highlighted = FALSE;
@@ -89,13 +94,13 @@ void drawScene()
 
     /*
     if ( width > height ){
-		float aspect = (GLfloat) width / height;
-		gluOrtho2D( -300.0*aspect, 300.0*aspect, -300.0, 300.0);
-	}else{
-		float aspect = (GLfloat) height / width;
-		gluOrtho2D( -300.0, 300.0, -300.0*aspect, 300.0*aspect);
-	}
-	*/
+    	float aspect = (GLfloat) width / height;
+    	gluOrtho2D( -300.0*aspect, 300.0*aspect, -300.0, 300.0);
+    }else{
+    	float aspect = (GLfloat) height / width;
+    	gluOrtho2D( -300.0, 300.0, -300.0*aspect, 300.0*aspect);
+    }
+    */
 
 
     glMatrixMode( GL_MODELVIEW );
@@ -180,7 +185,7 @@ void drawGraph(DirList dl)
     int dirCnt = dl.dirs.size();
     for(int i=0; i<dirCnt; i++)
     {
-        DrawSector(dl.dirs[i].sector.sectorStartAngle, dl.dirs[i].sector.sectorAngle, dl.dirs[i].sector.sectorStartRadius, dl.dirs[i].sector.sectorRadius, i*30, dl.dirs[i].sector.highlighted);
+        DrawSector(dl.dirs[i].sector.startAngle, dl.dirs[i].sector.angle, dl.dirs[i].sector.startRadius, dl.dirs[i].sector.radius, i*30, dl.dirs[i].sector.highlighted);
         drawGraph(dl.dirs[i]);
     }
 }
@@ -197,13 +202,13 @@ void prepareGraph(DirList &dl, int startAngle = 0, int endAngle = 360)
         float scale = (float)dl.dirs[i].fcount / (float)dl.fcount;
 
         dl.dirs[i].sector.highlighted = FALSE;
-        dl.dirs[i].sector.sectorStartAngle = (angleLength * (float)tmpCnt / (float)dl.fcount ) + startAngle;
-        dl.dirs[i].sector.sectorAngle = angleLength * scale;
-        dl.dirs[i].sector.sectorStartRadius = circleWidth + (dl.depth) * circleWidth;
-        dl.dirs[i].sector.sectorRadius = circleWidth + (dl.depth+1) * circleWidth;
+        dl.dirs[i].sector.startAngle = (angleLength * (float)tmpCnt / (float)dl.fcount ) + startAngle;
+        dl.dirs[i].sector.angle = angleLength * scale;
+        dl.dirs[i].sector.startRadius = circleWidth + (dl.depth) * circleWidth;
+        dl.dirs[i].sector.radius = circleWidth + (dl.depth+1) * circleWidth;
 
         tmpCnt += dl.dirs[i].fcount;
-        prepareGraph(dl.dirs[i], dl.dirs[i].sector.sectorStartAngle, dl.dirs[i].sector.sectorStartAngle + dl.dirs[i].sector.sectorAngle);
+        prepareGraph(dl.dirs[i], dl.dirs[i].sector.startAngle, dl.dirs[i].sector.startAngle + dl.dirs[i].sector.angle);
     }
 }
 

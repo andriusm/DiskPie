@@ -11,10 +11,10 @@ using namespace std;
 
 typedef struct
 {
-    double sectorStartAngle;
-    double sectorAngle;
-    double sectorStartRadius;
-    double sectorRadius;
+    double startAngle;
+    double angle;
+    double startRadius;
+    double radius;
     bool highlighted;
 } Sector;
 
