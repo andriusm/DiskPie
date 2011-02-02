@@ -2,12 +2,12 @@
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
 	<File name="include\FileGraph.h" open="1" top="0" tabpos="3">
-		<Cursor position="219" topLine="0" />
+		<Cursor position="277" topLine="0" />
 	</File>
 	<File name="src\FileGraph.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="1671" topLine="44" />
+		<Cursor position="512" topLine="20" />
 	</File>
 	<File name="src\main.cpp" open="1" top="1" tabpos="2">
-		<Cursor position="1153" topLine="36" />
+		<Cursor position="1214" topLine="24" />
 	</File>
 </CodeBlocks_layout_file>

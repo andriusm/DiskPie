@@ -26,7 +26,9 @@ DirList FileGraph::SearchDirectory(string rootDir, int depth = 0)
     string strFilePath;
     WIN32_FIND_DATA FileInformation;
     strPattern = rootDir + "\\*.*";
+
     dl.dirname = rootDir;
+    dl.depth = depth;
 
     hFile = FindFirstFile(strPattern.c_str(), &FileInformation);
     if(hFile != INVALID_HANDLE_VALUE)
@@ -43,7 +45,7 @@ DirList FileGraph::SearchDirectory(string rootDir, int depth = 0)
                     DirList subdir = SearchDirectory(strFilePath, depth+1);
                     if(subdir.fcount>0)
                     {
-                        dl.depth = depth;
+                        //dl.depth = depth;
                         dl.fcount += subdir.fcount;
                         dl.dirs.push_back(subdir);
                     }

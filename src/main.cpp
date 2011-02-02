@@ -5,6 +5,7 @@
 #include "FileGraph.h"
 
 FileGraph fg;
+int maxDepth = 0;
 int width, height;
 int centerX, centerY;
 bool running = true;
@@ -35,44 +36,56 @@ void GLFWCALL refreshWindow(void)
     //drawScene();
 }
 
+void checkHover(int mx, int my, double angle, DirList dl)
+{
+    int inner = (dl.depth + 1) * circleWidth;
+    inner *= inner;
+
+    int outter = (dl.depth + 2) * circleWidth;
+    outter *= outter;
+
+    cout << inner << " < " << mx+my << " < " << outter << endl;
+
+    for(int i=0; i<dl.dirs.size(); i++)
+    {
+
+        if(mx + my > inner && mx + my < outter
+                // && angle > dl.dirs[i].sector.startAngle
+                // && angle < (dl.dirs[i].sector.startAngle + dl.dirs[i].sector.angle)
+          )
+        {
+            //dl.dirs[i].sector.highlighted = TRUE;
+            fg.dl.dirs[1].dirs[0].sector.highlighted = TRUE;
+        }
+        else
+        {
+            //dl.dirs[i].sector.highlighted = FALSE;
+            fg.dl.dirs[1].dirs[0].sector.highlighted = FALSE;
+        }
+        checkHover(mx, my, angle, dl.dirs[i]);
+    }
+
+    cout << "-----------------------------------------" << endl;
+}
+
 void GLFWCALL mousePosChanged(int mx, int my)
 {
-    //cout << "mouse: " << mx << " " << my << endl;
-
+    //prepare the squared mouse position values
     mx -= centerX;
     my -= centerY;
     double angle = atan2(my, mx);
     mx *= mx;
     my *= my;
 
+    //get the angle of the mouse pointer position
     angle = angle * 180 / M_PI + 90;
     angle += 360;
     if(angle>=360) angle -= 360;
 
-    cout << "angle2: " << angle << endl;
+    checkHover(mx, my, angle, fg.dl);
+    cout << "=========================" << endl;
 
-    //cout << fg.dl.dirs[2].sector.startAngle << "  " << fg.dl.dirs[2].sector.angle << endl;
-
-
-    int inner = fg.dl.dirs[2].depth * circleWidth;
-    inner *= inner;
-
-    int outter = (fg.dl.dirs[2].depth + 1) * circleWidth;
-    outter *= outter;
-
-    if(mx + my > inner && mx + my < outter &&
-            angle > fg.dl.dirs[2].sector.startAngle &&
-            angle < (fg.dl.dirs[2].sector.startAngle + fg.dl.dirs[2].sector.angle) )
-    {
-        fg.dl.dirs[2].sector.highlighted = TRUE;
-    }
-    else
-    {
-        fg.dl.dirs[2].sector.highlighted = FALSE;
-    }
-
-    //if(mx*mx + my*my < circleWidthSquared) fg.dl.dirs[2].sector.highlighted = TRUE;
-    //else fg.dl.dirs[2].sector.highlighted = FALSE;
+    //drawScene();
 }
 
 void GLFWCALL keyPressed(int key, int action)
@@ -123,14 +136,7 @@ int glInit()
     }
 
     glfwSetWindowTitle("Disk Pie");
-
     glfwSwapInterval(1);
-
-    //various callbacks
-    glfwSetWindowSizeCallback(resizeWindow);
-    glfwSetWindowRefreshCallback(refreshWindow);
-    glfwSetKeyCallback(keyPressed);
-    glfwSetMousePosCallback(mousePosChanged);
 
     glShadeModel(GL_SMOOTH);
     glClearDepth(1.0f);
@@ -169,7 +175,8 @@ void DrawSector( double nStartAngle, double nAngle, double nStartRadius, double 
         //---
 
         if(!bLit) glColor3ub(255 - nColor, 240, 220 - nColor);
-        else glColor3ub(255, 240 - nColor, 200 - nColor);
+        else glColor3ub(255, 0, 0);
+        //glColor3ub(255, 240 - nColor, 200 - nColor);
 
         gluQuadricDrawStyle (quadObj, GLU_FILL );
         gluQuadricNormals( quadObj, GLU_NONE );
@@ -207,6 +214,8 @@ void prepareGraph(DirList &dl, int startAngle = 0, int endAngle = 360)
         dl.dirs[i].sector.startRadius = circleWidth + (dl.depth) * circleWidth;
         dl.dirs[i].sector.radius = circleWidth + (dl.depth+1) * circleWidth;
 
+        if(dl.dirs[i].depth > maxDepth) maxDepth = dl.dirs[i].depth;
+
         tmpCnt += dl.dirs[i].fcount;
         prepareGraph(dl.dirs[i], dl.dirs[i].sector.startAngle, dl.dirs[i].sector.startAngle + dl.dirs[i].sector.angle);
     }
@@ -219,6 +228,12 @@ int main()
     if(glInit() != 0) return -1;
 
     prepareGraph(fg.dl);
+
+    //various callbacks
+    glfwSetWindowSizeCallback(resizeWindow);
+    glfwSetWindowRefreshCallback(refreshWindow);
+    glfwSetKeyCallback(keyPressed);
+    glfwSetMousePosCallback(mousePosChanged);
 
     while(running)
     {
