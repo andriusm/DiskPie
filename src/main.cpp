@@ -36,36 +36,33 @@ void GLFWCALL refreshWindow(void)
     //drawScene();
 }
 
-void checkHover(int mx, int my, double angle, DirList dl)
+void checkHover(int mradius, double angle, DirList *dl)
 {
-    int inner = (dl.depth + 1) * circleWidth;
-    inner *= inner;
-
-    int outter = (dl.depth + 2) * circleWidth;
-    outter *= outter;
-
-    cout << inner << " < " << mx+my << " < " << outter << endl;
-
-    for(int i=0; i<dl.dirs.size(); i++)
+    int dirCnt = dl->dirs.size();
+    for(int i=0; i<dirCnt; i++)
     {
 
-        if(mx + my > inner && mx + my < outter
-                // && angle > dl.dirs[i].sector.startAngle
-                // && angle < (dl.dirs[i].sector.startAngle + dl.dirs[i].sector.angle)
+        int inner = (dl->dirs[i].depth + 0) * circleWidth;
+        inner *= inner;
+
+        int outter = (dl->dirs[i].depth + 1) * circleWidth;
+        outter *= outter;
+
+        //cout << inner << " < " << mradius << " < " << outter << " = " << (mradius > inner && mradius < outter) << dl.dirs[i].dirname << endl;
+
+        if(mradius > inner && mradius < outter
+           && angle > dl->dirs[i].sector.startAngle
+           && angle < (dl->dirs[i].sector.startAngle + dl->dirs[i].sector.angle)
           )
         {
-            //dl.dirs[i].sector.highlighted = TRUE;
-            fg.dl.dirs[1].dirs[0].sector.highlighted = TRUE;
+            dl->dirs[i].sector.highlighted = TRUE;
         }
         else
         {
-            //dl.dirs[i].sector.highlighted = FALSE;
-            fg.dl.dirs[1].dirs[0].sector.highlighted = FALSE;
+            dl->dirs[i].sector.highlighted = FALSE;
         }
-        checkHover(mx, my, angle, dl.dirs[i]);
+        checkHover(mradius, angle, &dl->dirs[i]);
     }
-
-    cout << "-----------------------------------------" << endl;
 }
 
 void GLFWCALL mousePosChanged(int mx, int my)
@@ -82,10 +79,7 @@ void GLFWCALL mousePosChanged(int mx, int my)
     angle += 360;
     if(angle>=360) angle -= 360;
 
-    checkHover(mx, my, angle, fg.dl);
-    cout << "=========================" << endl;
-
-    //drawScene();
+    checkHover(mx + my, angle, &fg.dl);
 }
 
 void GLFWCALL keyPressed(int key, int action)
@@ -104,17 +98,6 @@ void drawScene()
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
     gluOrtho2D( 0, width, 0, height );
-
-    /*
-    if ( width > height ){
-    	float aspect = (GLfloat) width / height;
-    	gluOrtho2D( -300.0*aspect, 300.0*aspect, -300.0, 300.0);
-    }else{
-    	float aspect = (GLfloat) height / width;
-    	gluOrtho2D( -300.0, 300.0, -300.0*aspect, 300.0*aspect);
-    }
-    */
-
 
     glMatrixMode( GL_MODELVIEW );
 
@@ -223,8 +206,9 @@ void prepareGraph(DirList &dl, int startAngle = 0, int endAngle = 360)
 
 int main()
 {
-    //fg.FindFiles("c:\\andrius\\src");
-    fg.FindFiles("c:\\downloads\\mybatis\\mybatis-generator-core-1.3.1");
+    //fg.FindFiles(".");
+    fg.FindFiles("c:\\andrius\\src");
+    //fg.FindFiles("c:\\downloads\\mybatis\\mybatis-generator-core-1.3.1");
     if(glInit() != 0) return -1;
 
     prepareGraph(fg.dl);
@@ -238,7 +222,7 @@ int main()
     while(running)
     {
         drawScene();
-        glfwSleep(0.03);
+        //glfwSleep(0.03);
     }
 
     return 0;
